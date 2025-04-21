@@ -82,7 +82,7 @@ function generatePredictions(mode, timeInput) {
         if (seededRandom(seed + 3, 0, 1) < 0.3) {
             const highRiskMultiplier = seededRandom(seed + 4, 10, 150).toFixed(2);
             predictions.push({
-                text: `Risika avo : ${highRiskMultiplier}x`,
+                text: `Vinavina manaraka (Avo risika) : ${highRiskMultiplier}x`,
                 classes: `text-orange-700 bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200 font-bold shadow-md p-3 sm:p-4 rounded-lg ${hoverHighRiskClasses} text-glow transition-all duration-300 animate__animated animate__fadeInUp`
             });
         }
@@ -104,7 +104,7 @@ function generatePredictions(mode, timeInput) {
         if (seededRandom(seed + 3, 0, 1) < 0.3) {
             const highRiskMultiplier = seededRandom(seed + 4, 10, 150).toFixed(2);
             predictions.push({
-                text: `Risika avo : ${highRiskMultiplier}x`,
+                text: `(risika Avo) : ${highRiskMultiplier}x`,
                 classes: `text-orange-700 bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200 font-bold shadow-md p-3 sm:p-4 rounded-lg ${hoverHighRiskClasses} text-glow transition-all duration-300 animate__animated animate__fadeInUp`
             });
         }
