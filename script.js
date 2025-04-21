@@ -1,8 +1,3 @@
-// Détecter si l'appareil est tactile (pour désactiver les effets de survol)
-const isTouchDevice = () => {
-    return ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0);
-};
-
 // Simple fonction de hachage pour rendre les prédictions déterministes
 function hashTime(timeStr) {
     let hash = 0;
@@ -61,8 +56,6 @@ function generatePredictions(mode, timeInput) {
     const parsedTime = timeInput ? parseTimeInput(timeInput) : null;
     const timeStr = parsedTime ? timeInput : 'Tsy voafaritra ny ora';
     const seed = hashTime(timeStr); // Hachage de l'heure pour prédictions déterministes
-    const hoverClasses = isTouchDevice() ? '' : 'hover:border-blue-400 hover:scale-102';
-    const hoverHighRiskClasses = isTouchDevice() ? '' : 'hover:scale-105';
 
     if (mode === 'hard') {
         // Mode Difficile : deux prédictions entre 4x et 6x, décalées de 9 et 10 min
@@ -72,18 +65,18 @@ function generatePredictions(mode, timeInput) {
         const offsetTime2 = parsedTime ? generateOffsetTime(parsedTime, 600) : 'Tsy voafaritra ny ora';
         predictions.push({
             text: `Vinavina manaraka : ${multiplier1}x amin'ny ${offsetTime1}`,
-            classes: `text-blue-700 bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 shadow-sm p-3 sm:p-4 rounded-lg ${hoverClasses} transition-all duration-300 animate__animated animate__fadeInUp`
+            classes: 'text-blue-700 bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 shadow-sm p-4 rounded-lg hover:border-blue-400 hover:scale-102 transition-all duration-300 animate__animated animate__fadeInUp'
         });
         predictions.push({
             text: `Vinavina manaraka : ${multiplier2}x amin'ny ${offsetTime2}`,
-            classes: `text-blue-700 bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 shadow-sm p-3 sm:p-4 rounded-lg ${hoverClasses} transition-all duration-300 animate__animated animate__fadeInUp`
+            classes: 'text-blue-700 bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 shadow-sm p-4 rounded-lg hover:border-blue-400 hover:scale-102 transition-all duration-300 animate__animated animate__fadeInUp'
         });
         // Ajout possible d'une prédiction de risque élevé (30% de chance)
         if (seededRandom(seed + 3, 0, 1) < 0.3) {
             const highRiskMultiplier = seededRandom(seed + 4, 10, 150).toFixed(2);
             predictions.push({
-                text: `Vinavina manaraka (Avo risika) : ${highRiskMultiplier}x`,
-                classes: `text-orange-700 bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200 font-bold shadow-md p-3 sm:p-4 rounded-lg ${hoverHighRiskClasses} text-glow transition-all duration-300 animate__animated animate__fadeInUp`
+                text: `Risika avo : ${highRiskMultiplier}x`,
+                classes: 'text-orange-700 bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200 font-bold shadow-md p-4 rounded-lg hover:scale-105 text-glow transition-all duration-300 animate__animated animate__fadeInUp'
             });
         }
     } else {
@@ -94,18 +87,18 @@ function generatePredictions(mode, timeInput) {
         const offsetTime2 = parsedTime ? generateOffsetTime(parsedTime, 240) : 'Tsy voafaritra ny ora';
         predictions.push({
             text: `Vinavina manaraka : ${multiplier1}x amin'ny ${offsetTime1}`,
-            classes: `text-blue-700 bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 shadow-sm p-3 sm:p-4 rounded-lg ${hoverClasses} transition-all duration-300 animate__animated animate__fadeInUp`
+            classes: 'text-blue-700 bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 shadow-sm p-4 rounded-lg hover:border-blue-400 hover:scale-102 transition-all duration-300 animate__animated animate__fadeInUp'
         });
         predictions.push({
             text: `Vinavina manaraka : ${multiplier2}x amin'ny ${offsetTime2}`,
-            classes: `text-blue-700 bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 shadow-sm p-3 sm:p-4 rounded-lg ${hoverClasses} transition-all duration-300 animate__animated animate__fadeInUp`
+            classes: 'text-blue-700 bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 shadow-sm p-4 rounded-lg hover:border-blue-400 hover:scale-102 transition-all duration-300 animate__animated animate__fadeInUp'
         });
         // Ajout possible d'une prédiction de risque élevé (30% de chance)
         if (seededRandom(seed + 3, 0, 1) < 0.3) {
             const highRiskMultiplier = seededRandom(seed + 4, 10, 150).toFixed(2);
             predictions.push({
-                text: `(risika Avo) : ${highRiskMultiplier}x`,
-                classes: `text-orange-700 bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200 font-bold shadow-md p-3 sm:p-4 rounded-lg ${hoverHighRiskClasses} text-glow transition-all duration-300 animate__animated animate__fadeInUp`
+                text: `Risika avo : ${highRiskMultiplier}x`,
+                classes: 'text-orange-700 bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200 font-bold shadow-md p-4 rounded-lg hover:scale-105 text-glow transition-all duration-300 animate__animated animate__fadeInUp'
             });
         }
     }
@@ -129,11 +122,11 @@ function updateGameHistory(games) {
     tbody.innerHTML = '';
     games.forEach(game => {
         const row = document.createElement('tr');
-        row.className = 'transition-all duration-300 animate__animated animate__fadeIn';
+        row.className = 'hover:bg-purple-100 transition-all duration-300 animate__animated animate__fadeIn';
         row.innerHTML = `
-            <td class="p-2 sm:p-3 text-sm sm:text-base">${game.round}</td>
-            <td class="p-2 sm:p-3 text-sm sm:text-base">${game.multiplier}x</td>
-            <td class="p-2 sm:p-3 ${game.result === 'Fianjerana aloha' ? 'text-red-600 font-medium' : 'text-green-600 font-medium'} text-sm sm:text-base">${game.result}</td>
+            <td class="p-3">${game.round}</td>
+            <td class="p-3">${game.multiplier}x</td>
+            <td class="p-3 ${game.result === 'Fianjerana aloha' ? 'text-red-600 font-medium' : 'text-green-600 font-medium'}">${game.result}</td>
         `;
         tbody.appendChild(row);
     });
@@ -155,7 +148,7 @@ function updateInterface(mode, timeInput) {
     // Mettre à jour les prédictions
     const predictions = generatePredictions(mode, timeInput);
     const predictionDiv = document.getElementById('prediction');
-    predictionDiv.innerHTML = predictions.map(pred => `<p class="text-lg sm:text-xl font-semibold ${pred.classes}">${pred.text}</p>`).join('');
+    predictionDiv.innerHTML = predictions.map(pred => `<p class="text-xl font-semibold ${pred.classes}">${pred.text}</p>`).join('');
 
     // Mettre à jour le mode affiché
     document.getElementById('currentMode').textContent = mode === 'hard' ? 'Sarotra' : 'Ara-dalàna';
