@@ -1,152 +1,177 @@
-// Fonction de hachage améliorée
+// Simple fonction de hachage pour rendre les prédictions déterministes
 function hashTime(timeStr) {
-    let hash = 5381;
+    let hash = 0;
     for (let i = 0; i < timeStr.length; i++) {
-        hash = (hash << 5) + hash + timeStr.charCodeAt(i);
+        hash = ((hash << 5) - hash) + timeStr.charCodeAt(i);
+        hash = hash & hash; // Convertir en 32 bits
     }
     return Math.abs(hash);
 }
 
-// Génération aléatoire plus précise
+// Générer un nombre pseudo-aléatoire déterministe entre min et max basé sur un seed
 function seededRandom(seed, min, max) {
-    seed = (seed * 9301 + 49297) % 233280;
-    const random = seed / 233280;
+    const x = Math.sin(seed) * 10000;
+    const random = x - Math.floor(x);
     return min + random * (max - min);
 }
 
-// Validation améliorée de l'heure
+// Valider et parser l'heure saisie
 function parseTimeInput(timeStr) {
-    const regex = /^([0-1]\d|2[0-3]):([0-5]\d):([0-5]\d)$/;
-    if (!regex.test(timeStr)) return null;
-    return timeStr.split(':').map(Number);
-}
-
-// Génération des temps avec gestion d'erreur
-function generateOffsetTime(parsedTime, offsetSeconds) {
-    if (!parsedTime) return 'Heure invalide';
-    
-    try {
-        const total = parsedTime[0] * 3600 + parsedTime[1] * 60 + parsedTime[2];
-        const newTotal = (total + offsetSeconds) % 86400;
-        return [
-            Math.floor(newTotal / 3600).toString().padStart(2, '0'),
-            Math.floor((newTotal % 3600) / 60).toString().padStart(2, '0')
-        ].join(':');
-    } catch {
-        return 'Erreur de calcul';
+    const regex = /^([0-1][0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/;
+    if (!regex.test(timeStr)) {
+        return null;
     }
+    const [hours, minutes, seconds] = timeStr.split(':').map(Number);
+    return { hours, minutes, seconds };
 }
 
-// Génération des données de jeu réaliste
+// Générer une heure décalée (sans secondes)
+function generateOffsetTime(baseTime, offsetSeconds) {
+    const totalSeconds = baseTime.hours * 3600 + baseTime.minutes * 60 + baseTime.seconds;
+    const newTotalSeconds = (totalSeconds + offsetSeconds) % (24 * 3600); // Gérer le dépassement de minuit
+    const newHours = Math.floor(newTotalSeconds / 3600);
+    const newMinutes = Math.floor((newTotalSeconds % 3600) / 60);
+    return `${newHours.toString().padStart(2, '0')}:${newMinutes.toString().padStart(2, '0')}`;
+}
+
+// Simuler des données de jeu selon le mode
 function generateGameData(count, mode) {
-    const results = [];
-    const crashProbability = mode === 'hard' ? 0.4 : 0.2;
-    
+    const data = [];
     for (let i = 0; i < count; i++) {
-        const crash = Math.random() < crashProbability;
-        const multiplier = crash 
-            ? (Math.random() * 1.5 + 0.5).toFixed(2)
-            : (Math.random() * (mode === 'hard' ? 10 : 5) + 1).toFixed(2);
-        
-        results.push({
+        let multiplier;
+        // Modes Normal et Difficile : multiplicateur entre 4x et 6x
+        multiplier = (Math.random() * (6 - 4) + 4).toFixed(2);
+        data.push({
             round: i + 1,
-            multiplier,
+            multiplier: multiplier,
             result: multiplier < 2 ? 'Fianjerana aloha' : 'Miorina'
         });
     }
-    return results;
+    return data;
 }
 
-// Génération des prédictions corrigée
+// Générer deux ou trois prédictions simulées selon le mode
 function generatePredictions(mode, timeInput) {
-    const parsedTime = parseTimeInput(timeInput);
-    const predictions = [];
-    const baseSeed = hashTime(timeInput || Date.now().toString());
+    let predictions = [];
+    const parsedTime = timeInput ? parseTimeInput(timeInput) : null;
+    const timeStr = parsedTime ? timeInput : 'Tsy voafaritra ny ora';
+    const seed = hashTime(timeStr); // Hachage de l'heure pour prédictions déterministes
 
-    // Génération pour 2 prédictions
-    [1, 2].forEach(i => {
-        const seed = baseSeed + i;
-        const offset = mode === 'hard' ? i * 600 : i * 180;
-        const time = generateOffsetTime(parsedTime, offset);
-        
-        const multiplier = seededRandom(seed, 
-            mode === 'hard' ? 2 : 1.5, 
-            mode === 'hard' ? 15 : 8
-        ).toFixed(2);
-
+    if (mode === 'hard') {
+        // Mode Difficile : deux prédictions entre 4x et 6x, décalées de 9 et 10 min
+        const multiplier1 = seededRandom(seed + 1, 4, 6).toFixed(2);
+        const multiplier2 = seededRandom(seed + 2, 4, 6).toFixed(2);
+        const offsetTime1 = parsedTime ? generateOffsetTime(parsedTime, 540) : 'Tsy voafaritra ny ora';
+        const offsetTime2 = parsedTime ? generateOffsetTime(parsedTime, 600) : 'Tsy voafaritra ny ora';
         predictions.push({
-            text: `Vinavina ${i}: ${multiplier}x @ ${time}`,
-            class: mode === 'hard' ? 'bg-red-50 text-red-700' : 'bg-blue-50 text-blue-700'
+            text: `Vinavina manaraka : ${multiplier1}x amin'ny ${offsetTime1}`,
+            classes: 'text-blue-700 bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 shadow-sm p-4 rounded-lg hover:border-blue-400 hover:scale-102 transition-all duration-300 animate__animated animate__fadeInUp'
         });
-    });
-
+        predictions.push({
+            text: `Vinavina manaraka : ${multiplier2}x amin'ny ${offsetTime2}`,
+            classes: 'text-blue-700 bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 shadow-sm p-4 rounded-lg hover:border-blue-400 hover:scale-102 transition-all duration-300 animate__animated animate__fadeInUp'
+        });
+        // Ajout possible d'une prédiction de risque élevé (30% de chance)
+        if (seededRandom(seed + 3, 0, 1) < 0.3) {
+            const highRiskMultiplier = seededRandom(seed + 4, 10, 150).toFixed(2);
+            predictions.push({
+                text: `Risika avo : ${highRiskMultiplier}x`,
+                classes: 'text-orange-700 bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200 font-bold shadow-md p-4 rounded-lg hover:scale-105 text-glow transition-all duration-300 animate__animated animate__fadeInUp'
+            });
+        }
+    } else {
+        // Mode Normal : deux prédictions entre 4x et 6x, décalées de 3 et 4 min
+        const multiplier1 = seededRandom(seed + 1, 4, 6).toFixed(2);
+        const multiplier2 = seededRandom(seed + 2, 4, 6).toFixed(2);
+        const offsetTime1 = parsedTime ? generateOffsetTime(parsedTime, 180) : 'Tsy voafaritra ny ora';
+        const offsetTime2 = parsedTime ? generateOffsetTime(parsedTime, 240) : 'Tsy voafaritra ny ora';
+        predictions.push({
+            text: `Vinavina manaraka : ${multiplier1}x amin'ny ${offsetTime1}`,
+            classes: 'text-blue-700 bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 shadow-sm p-4 rounded-lg hover:border-blue-400 hover:scale-102 transition-all duration-300 animate__animated animate__fadeInUp'
+        });
+        predictions.push({
+            text: `Vinavina manaraka : ${multiplier2}x amin'ny ${offsetTime2}`,
+            classes: 'text-blue-700 bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 shadow-sm p-4 rounded-lg hover:border-blue-400 hover:scale-102 transition-all duration-300 animate__animated animate__fadeInUp'
+        });
+        // Ajout possible d'une prédiction de risque élevé (30% de chance)
+        if (seededRandom(seed + 3, 0, 1) < 0.3) {
+            const highRiskMultiplier = seededRandom(seed + 4, 10, 150).toFixed(2);
+            predictions.push({
+                text: `Risika avo : ${highRiskMultiplier}x`,
+                classes: 'text-orange-700 bg-gradient-to-r from-orange-50 to-orange-100 border border-orange-200 font-bold shadow-md p-4 rounded-lg hover:scale-105 text-glow transition-all duration-300 animate__animated animate__fadeInUp'
+            });
+        }
+    }
     return predictions;
 }
 
-// Calcul des statistiques
+// Calculer les statistiques
 function calculateStats(games) {
-    const values = games.map(g => parseFloat(g.multiplier));
-    return {
-        avg: (values.reduce((a, b) => a + b, 0) / values.length).toFixed(2),
-        max: Math.max(...values).toFixed(2),
-        crashRate: ((values.filter(v => v < 2).length / values.length) * 100).toFixed(1)
-    };
+    const multipliers = games.map(game => parseFloat(game.multiplier));
+    const avgMultiplier = (multipliers.reduce((sum, val) => sum + val, 0) / multipliers.length).toFixed(2);
+    const maxMultiplier = Math.max(...multipliers).toFixed(2);
+    const lowCrashCount = multipliers.filter(m => m < 2).length;
+    const lowCrashRate = ((lowCrashCount / multipliers.length) * 100).toFixed(1);
+
+    return { avgMultiplier, maxMultiplier, lowCrashRate };
 }
 
-// Mise à jour de l'historique
-function updateHistory(games) {
+// Mettre à jour l'historique des parties
+function updateGameHistory(games) {
     const tbody = document.getElementById('gameHistory');
-    tbody.innerHTML = games.map(game => `
-        <tr class="hover:bg-gray-50">
+    tbody.innerHTML = '';
+    games.forEach(game => {
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-purple-100 transition-all duration-300 animate__animated animate__fadeIn';
+        row.innerHTML = `
             <td class="p-3">${game.round}</td>
             <td class="p-3">${game.multiplier}x</td>
-            <td class="p-3 font-medium ${game.multiplier < 2 ? 'text-red-600' : 'text-green-600'}">
-                ${game.result}
-            </td>
-        </tr>
-    `).join('');
+            <td class="p-3 ${game.result === 'Fianjerana aloha' ? 'text-red-600 font-medium' : 'text-green-600 font-medium'}">${game.result}</td>
+        `;
+        tbody.appendChild(row);
+    });
 }
 
-// Gestion de l'interface
-function updateUI(mode, time) {
+// Mettre à jour l'interface selon le mode
+function updateInterface(mode, timeInput) {
     const games = generateGameData(10, mode);
     const stats = calculateStats(games);
-    
-    // Mise à jour des stats
-    document.getElementById('avgMultiplier').textContent = `${stats.avg}x`;
-    document.getElementById('maxMultiplier').textContent = `${stats.max}x`;
-    document.getElementById('lowCrashRate').textContent = `${stats.crashRate}%`;
-    
-    // Mise à jour historique
-    updateHistory(games);
-    
-    // Prédictions
-    const predictions = generatePredictions(mode, time);
-    document.getElementById('prediction').innerHTML = predictions.map(p => `
-        <p class="p-4 rounded-lg ${p.class}">
-            ${p.text}
-        </p>
-    `).join('');
-    
-    // Mode courant
-    document.getElementById('currentMode').textContent = 
-        mode === 'hard' ? 'Sarotra' : 'Ara-dalàna';
+
+    // Mettre à jour les statistiques
+    document.getElementById('avgMultiplier').textContent = `${stats.avgMultiplier}x`;
+    document.getElementById('maxMultiplier').textContent = `${stats.maxMultiplier}x`;
+    document.getElementById('lowCrashRate').textContent = `${stats.lowCrashRate}%`;
+
+    // Mettre à jour l'historique
+    updateGameHistory(games);
+
+    // Mettre à jour les prédictions
+    const predictions = generatePredictions(mode, timeInput);
+    const predictionDiv = document.getElementById('prediction');
+    predictionDiv.innerHTML = predictions.map(pred => `<p class="text-xl font-semibold ${pred.classes}">${pred.text}</p>`).join('');
+
+    // Mettre à jour le mode affiché
+    document.getElementById('currentMode').textContent = mode === 'hard' ? 'Sarotra' : 'Ara-dalàna';
 }
 
-// Initialisation
-document.addEventListener('DOMContentLoaded', () => {
+// Initialiser le site
+function initialize() {
     let currentMode = 'normal';
-    
+    updateInterface(currentMode);
+
+    // Gestion des boutons de mode
     document.getElementById('normalMode').addEventListener('click', () => {
         currentMode = 'normal';
-        updateUI(currentMode, document.getElementById('normalTimeInput').value);
-    });
-    
-    document.getElementById('hardMode').addEventListener('click', () => {
-        currentMode = 'hard';
-        updateUI(currentMode, document.getElementById('hardTimeInput').value);
+        const timeInput = document.getElementById('normalTimeInput').value;
+        updateInterface(currentMode, timeInput);
     });
 
-    // Premier chargement
-    updateUI(currentMode);
-});
+    document.getElementById('hardMode').addEventListener('click', () => {
+        currentMode = 'hard';
+        const timeInput = document.getElementById('hardTimeInput').value;
+        updateInterface(currentMode, timeInput);
+    });
+}
+
+// Lancer l'initialisation
+initialize();
