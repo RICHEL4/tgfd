@@ -1,3 +1,4 @@
+/* styles.css */
 body {
     background: linear-gradient(to bottom right, #4b0082, #1e3a8a, #4c1d95);
     background-size: cover;
@@ -29,14 +30,6 @@ tr:nth-child(even) {
     background-color: #f3e8ff;
 }
 
-/* Style pour les messages d'erreur et de succès */
-.text-red-500, .text-green-500 {
-    padding: 0.5rem;
-    border-radius: 0.5rem;
-    background-color: rgba(255, 255, 255, 0.1);
-}
-
-/* Media queries pour petits écrans */
 @media (max-width: 640px) {
     .container {
         padding: 1rem;
@@ -54,7 +47,6 @@ tr:nth-child(even) {
         box-shadow: 0 0 8px rgba(124, 58, 237, 0.3);
     }
 
-    /* Désactiver les effets de survol sur mobile */
     [class*="hover:"] {
         transform: none !important;
         border-color: inherit !important;
