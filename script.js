@@ -152,12 +152,38 @@ function showSection(sectionId) {
             section.classList.remove('animate__animated', 'animate__fadeIn');
         }
     });
+
+    // Afficher/masquer le lien de déconnexion
+    const logoutLink = document.getElementById('logout-link');
+    if (sectionId === 'home-section') {
+        logoutLink.classList.remove('hidden');
+    } else {
+        logoutLink.classList.add('hidden');
+    }
 }
 
 // Initialisation
-function initialize() {
+async function initialize() {
     let currentMode = 'normal';
-    updateInterface(currentMode);
+
+    // Vérifier l'état de connexion
+    auth.onAuthStateChanged(async (user) => {
+        if (user) {
+            // Vérifier si le compte est activé
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            if (userDoc.exists() && userDoc.data().isActivated) {
+                showSection('home-section');
+                updateInterface(currentMode);
+            } else {
+                // Si le compte n'est pas activé, déconnecter et afficher l'inscription
+                await signOut(auth);
+                showSection('register-section');
+            }
+        } else {
+            // Si non connecté, afficher l'inscription
+            showSection('register-section');
+        }
+    });
 
     // Gestion des modes de jeu
     document.getElementById('normalMode').addEventListener('click', () => {
@@ -172,9 +198,18 @@ function initialize() {
     });
 
     // Gestion de la navigation
-    document.getElementById('home-link').addEventListener('click', (e) => {
+    document.getElementById('home-link').addEventListener('click', async (e) => {
         e.preventDefault();
-        showSection('home-section');
+        if (auth.currentUser) {
+            const userDoc = await getDoc(doc(db, 'users', auth.currentUser.uid));
+            if (userDoc.exists() && userDoc.data().isActivated) {
+                showSection('home-section');
+            } else {
+                showSection('register-section');
+            }
+        } else {
+            showSection('register-section');
+        }
     });
     document.getElementById('register-link').addEventListener('click', (e) => {
         e.preventDefault();
@@ -183,6 +218,11 @@ function initialize() {
     document.getElementById('login-link').addEventListener('click', (e) => {
         e.preventDefault();
         showSection('login-section');
+    });
+    document.getElementById('logout-link').addEventListener('click', async (e) => {
+        e.preventDefault();
+        await signOut(auth);
+        showSection('register-section');
     });
 
     // Gestion de l'inscription
@@ -236,10 +276,13 @@ function initialize() {
                 await updateDoc(doc(db, 'users', user.uid), {
                     isActivated: true
                 });
-                successMessage.textContent = 'Kaonty nafamafisina soa aman-tsara! Afaka miditra ianao izao.';
+                successMessage.textContent = 'Kaonty nafamafisina soa aman-tsara! Hafindra...';
                 successMessage.classList.remove('hidden');
                 document.getElementById('verify-form').classList.add('hidden');
-                setTimeout(() => showSection('login-section'), 2000);
+                setTimeout(() => {
+                    showSection('home-section');
+                    updateInterface(currentMode);
+                }, 2000);
             } else {
                 errorMessage.textContent = 'Kaody fanamafisana diso.';
                 errorMessage.classList.remove('hidden');
@@ -267,7 +310,10 @@ function initialize() {
             if (userDoc.exists() && userDoc.data().isActivated) {
                 successMessage.textContent = 'Hiditra nahomby! Hafindra...';
                 successMessage.classList.remove('hidden');
-                setTimeout(() => showSection('home-section'), 2000);
+                setTimeout(() => {
+                    showSection('home-section');
+                    updateInterface(currentMode);
+                }, 2000);
             } else {
                 errorMessage.textContent = 'Mbola tsy nafamafisina ny kaontinao.';
                 errorMessage.classList.remove('hidden');
