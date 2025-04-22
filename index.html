@@ -8,145 +8,138 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <link rel="stylesheet" href="styles.css">
 </head>
-<body class="font-sans min-h-screen bg-gradient-to-br from-purple-900 via-indigo-900 to-blue-900 relative">
-    <div class="absolute inset-0 bg-black opacity-30 z-[-1]"></div>
+<body class="font-sans min-h-screen">
     <div class="container mx-auto p-4 sm:p-6">
-        <!-- Navigation -->
-        <nav class="bg-gradient-to-r from-purple-700 via-indigo-600 to-blue-600 text-white p-4 sm:p-6 rounded-2xl shadow-lg mb-6 sm:mb-8 transition-all duration-300 animate__animated animate__fadeInDown">
-            <ul class="flex flex-col sm:flex-row sm:space-x-6 space-y-2 sm:space-y-0 justify-center items-center">
-                <li><a href="#" id="home-link" class="text-base sm:text-lg font-semibold text-glow hover:underline">Ankavitra</a></li>
-                <li><a href="#" id="register-link" class="text-base sm:text-lg font-semibold text-glow hover:underline">Fisoratana</a></li>
-                <li><a href="#" id="login-link" class="text-base sm:text-lg font-semibold text-glow hover:underline">Hiditra</a></li>
-                <li><a href="#" id="logout-link" class="text-base sm:text-lg font-semibold text-glow hover:underline hidden">Hivoaka</a></li>
-            </ul>
-        </nav>
-
-        <!-- Section Accueil -->
-        <div id="home-section" class="hidden">
-            <!-- Header -->
-            <header class="bg-gradient-to-r from-purple-700 via-indigo-600 to-blue-600 text-white p-4 sm:p-6 rounded-2xl shadow-lg mb-6 sm:mb-8 transition-all duration-300 animate__animated animate__fadeInDown">
-                <h1 class="text-3xl sm:text-5xl font-extrabold text-center tracking-tight text-glow">Tafa Iray</h1>
-                <p class="text-center mt-2 sm:mt-3 text-base sm:text-xl font-medium text-glow">Statistika sy vinavina natao ho an'ny lalao</p>
-            </header>
-
-            <!-- Avertissement -->
-            <div class="bg-amber-200 border-l-4 sm:border-l-8 border-amber-600 text-amber-900 p-4 sm:p-6 mb-6 sm:mb-8 rounded-2xl shadow-md transition-all duration-300 animate__animated animate__fadeIn">
-                <p class="font-semibold text-lg sm:text-xl">Fampitandremana :</p>
-                <p class="text-sm sm:text-base">Ity dia fampisehoana. Ny lalao dia mifototra amin'ny mpamorona isa kisendrasendra (RNG). Tsy misy vinavina afaka manome antoka ny fandresena. Milalao am-pahamendrehana ary aza miloka afa-tsy izay zakan'ny teti-bolanao.</p>
+        <!-- Header -->
+        <header class="bg-gradient-to-r from-purple-700 via-indigo-600 to-blue-600 text-white p-4 sm:p-6 rounded-2xl shadow-lg mb-6 sm:mb-8 transition-all duration-300 animate__animated animate__fadeInDown">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h1 class="text-3xl sm:text-5xl font-extrabold text-center tracking-tight text-glow">Tafa Iray</h1>
+                    <p class="text-center mt-2 sm:mt-3 text-base sm:text-xl font-medium text-glow">Statistika sy vinavina natao ho an'ny lalao</p>
+                </div>
+                <div>
+                    <button id="loginButton" class="bg-blue-500 text-white px-4 py-2 rounded-lg shadow-glow">Hiditra</button>
+                    <button id="registerButton" class="bg-green-500 text-white px-4 py-2 rounded-lg shadow-glow ml-2">Hisoratra</button>
+                </div>
             </div>
+        </header>
 
-            <!-- Sélection du Mode -->
-            <section class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg mb-6 sm:mb-8 transition-all duration-300 animate__animated animate__fadeInUp">
-                <h2 class="text-2xl sm:text-3xl font-bold text-purple-700 mb-4 text-glow">Fidio ny fomba lalao</h2>
-                <div class="flex flex-col space-y-4">
-                    <div class="flex flex-col space-y-2">
-                        <button id="normalMode" class="bg-gradient-to-r from-blue-600 to-blue-800 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg shadow-glow transition-all duration-300">Fihodinana Ara-dalàna</button>
-                        <input id="normalTimeInput" type="text" placeholder="HH:MM:SS (oh: 10:10:30)" class="p-1 sm:p-2 bg-gray-50 bg-opacity-80 border border-gray-300 rounded-lg focus:outline-none focus:ring-4 focus:ring-purple-500 text-sm sm:text-base transition-all duration-300" />
-                    </div>
-                    <div class="flex flex-col space-y-2">
-                        <button id="hardMode" class="bg-gradient-to-r from-red-600 to-red-800 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg shadow-glow transition-all duration-300">Fihodinana Sarotra</button>
-                        <input id="hardTimeInput" type="text" placeholder="HH:MM:SS (oh: 10:10:30)" class="p-1 sm:p-2 bg-gray-50 bg-opacity-80 border border-gray-300 rounded-lg focus:outline-none focus:ring-4 focus:ring-purple-500 text-sm sm:text-base transition-all duration-300" />
-                    </div>
-                </div>
-                <p class="mt-4 text-gray-600 text-sm sm:text-base">Fomba ankehitriny : <span id="currentMode" class="font-semibold text-purple-600 text-glow">Ara-dalàna</span></p>
-            </section>
-
-            <!-- Prédictions -->
-            <section class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg mb-6 sm:mb-8 transition-all duration-300 animate__animated animate__fadeInUp">
-                <h2 class="text-2xl sm:text-3xl font-bold text-purple-700 mb-4 text-glow">Vinavina ho an'ny fihodinana manaraka</h2>
-                <div id="prediction" class="space-y-2 sm:space-y-4"></div>
-            </section>
-
-            <!-- Statistiques -->
-            <section class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg mb-6 sm:mb-8 transition-all duration-300 animate__animated animate__fadeInUp">
-                <h2 class="text-2xl sm:text-3xl font-bold text-purple-700 mb-4 sm:mb-6 text-glow">Statistikan'ny lalao</h2>
-                <div class="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-3">
-                    <div class="bg-gradient-to-br from-purple-50 to-purple-100 p-4 sm:p-6 rounded-xl transition-all duration-300">
-                        <p class="font-semibold text-gray-700 text-sm sm:text-base">Salan'isa multiplier</p>
-                        <p id="avgMultiplier" class="text-lg sm:text-xl font-bold text-purple-600 text-glow">0.00x</p>
-                    </div>
-                    <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-4 sm:p-6 rounded-xl transition-all duration-300">
-                        <p class="font-semibold text-gray-700 text-sm sm:text-base">Multiplier avo indrindra</p>
-                        <p id="maxMultiplier" class="text-lg sm:text-xl font-bold text-blue-600 text-glow">0.00x</p>
-                    </div>
-                    <div class="bg-gradient-to-br from-amber-50 to-amber-100 p-4 sm:p-6 rounded-xl transition-all duration-300">
-                        <p class="font-semibold text-gray-700 text-sm sm:text-base">Hafatran'ny fianjerana < 2x</p>
-                        <p id="lowCrashRate" class="text-lg sm:text-xl font-bold text-amber-600 text-glow">0%</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Historique -->
-            <section class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg transition-all duration-300 animate__animated animate__fadeInUp">
-                <h2 class="text-2xl sm:text-3xl font-bold text-purple-700 mb-4 sm:mb-6 text-glow">Tantaran'ny lalao farany</h2>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left rounded-lg">
-                        <thead>
-                            <tr class="bg-purple-100 text-purple-800">
-                                <th class="p-2 sm:p-3 font-semibold rounded-tl-lg text-sm sm:text-base">Fihodinana</th>
-                                <th class="p-2 sm:p-3 font-semibold text-sm sm:text-base">Multiplier</th>
-                                <th class="p-2 sm:p-3 font-semibold rounded-tr-lg text-sm sm:text-base">Vokatra</th>
-                            </tr>
-                        </thead>
-                        <tbody id="gameHistory"></tbody>
-                    </table>
-                </div>
-            </section>
+        <!-- Avertissement -->
+        <div class="bg-amber-200 border-l-4 sm:border-l-8 border-amber-600 text-amber-900 p-4 sm:p-6 mb-6 sm:mb-8 rounded-2xl shadow-md transition-all duration-300 animate__animated animate__fadeIn">
+            <p class="font-semibold text-lg sm:text-xl">Fampitandremana :</p>
+            <p class="text-sm sm:text-base">Ity dia fampisehoana. Ny lalao dia mifototra amin'ny mpamorona isa kisendrasendra (RNG). Tsy misy vinavina afaka manome antoka ny fandresena. Milalao am-pahamendrehana ary aza miloka afa-tsy izay zakan'ny teti-bolanao.</p>
         </div>
 
-        <!-- Section Inscription -->
-        <div id="register-section">
-            <header class="bg-gradient-to-r from-purple-700 via-indigo-600 to-blue-600 text-white p-4 sm:p-6 rounded-2xl shadow-lg mb-6 sm:mb-8 transition-all duration-300 animate__animated animate__fadeInDown">
-                <h1 class="text-3xl sm:text-5xl font-extrabold text-center tracking-tight text-glow">Fisoratana</h1>
-                <p class="text-center mt-2 sm:mt-3 text-base sm:text-xl font-medium text-glow">Mamorona kaonty ho an'ny Tafa Iray</p>
-            </header>
-            <section class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg transition-all duration-300 animate__animated animate__fadeInUp">
-                <div id="error-message" class="text-red-500 mb-4 hidden font-semibold"></div>
-                <div id="success-message" class="text-green-500 mb-4 hidden font-semibold"></div>
-                <!-- Formulaire d'inscription -->
-                <div id="register-form">
-                    <div class="mb-4">
-                        <label class="block text-gray-700 font-semibold">Mailaka</label>
-                        <input type="email" id="email" class="w-full p-2 bg-gray-50 bg-opacity-80 border border-gray-300 rounded-lg focus:outline-none focus:ring-4 focus:ring-purple-500 text-sm sm:text-base transition-all duration-300" required>
-                    </div>
-                    <div class="mb-4">
-                        <label class="block text-gray-700 font-semibold">Teny miafina</label>
-                        <input type="password" id="password" class="w-full p-2 bg-gray-50 bg-opacity-80 border border-gray-300 rounded-lg focus:outline-none focus:ring-4 focus:ring-purple-500 text-sm sm:text-base transition-all duration-300" required>
-                    </div>
-                    <button id="register-btn" class="w-full bg-gradient-to-r from-blue-600 to-blue-800 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg shadow-glow transition-all duration-300">Fisoratana</button>
+        <!-- Login Modal -->
+        <div id="loginModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+            <div class="bg-white p-6 rounded-2xl shadow-lg w-full max-w-md">
+                <h2 class="text-2xl font-bold text-purple-700 mb-4 text-glow">Hiditra</h2>
+                <div class="space-y-4">
+                    <input id="loginEmail" type="email" placeholder="Email" class="w-full p-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-4 focus:ring-purple-500" />
+                    <input id="loginPassword" type="password" placeholder="Tenimiafina" class="w-full p-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-4 focus:ring-purple-500" />
+                    <button id="submitLogin" class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg shadow-glow">Hiditra</button>
+                    <button id="closeLoginModal" class="w-full bg-gray-300 text-gray-700 px-4 py-2 rounded-lg">Hikatona</button>
                 </div>
-                <!-- Formulaire de vérification du code -->
-                <div id="verify-form" class="hidden">
-                    <div class="mb-4">
-                        <label class="block text-gray-700 font-semibold">Kaody fanamafisana</label>
-                        <input type="text" id="activation-code" class="w-full p-2 bg-gray-50 bg-opacity-80 border border-gray-300 rounded-lg focus:outline-none focus:ring-4 focus:ring-purple-500 text-sm sm:text-base transition-all duration-300" required>
-                    </div>
-                    <button id="verify-btn" class="w-full bg-gradient-to-r from-blue-600 to-blue-800 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg shadow-glow transition-all duration-300">Hamarino</button>
-                </div>
-            </section>
+            </div>
         </div>
 
-        <!-- Section Connexion -->
-        <div id="login-section" class="hidden">
-            <header class="bg-gradient-to-r from-purple-700 via-indigo-600 to-blue-600 text-white p-4 sm:p-6 rounded-2xl shadow-lg mb-6 sm:mb-8 transition-all duration-300 animate__animated animate__fadeInDown">
-                <h1 class="text-3xl sm:text-5xl font-extrabold text-center tracking-tight text-glow">Hiditra</h1>
-                <p class="text-center mt-2 sm:mt-3 text-base sm:text-xl font-medium text-glow">Midira amin'ny kaontinao Tafa Iray</p>
-            </header>
-            <section class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg transition-all duration-300 animate__animated animate__fadeInUp">
-                <div id="login-error-message" class="text-red-500 mb-4 hidden font-semibold"></div>
-                <div id="login-success-message" class="text-green-500 mb-4 hidden font-semibold"></div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 font-semibold">Mailaka</label>
-                    <input type="email" id="login-email" class="w-full p-2 bg-gray-50 bg-opacity-80 border border-gray-300 rounded-lg focus:outline-none focus:ring-4 focus:ring-purple-500 text-sm sm:text-base transition-all duration-300" required>
+        <!-- Register Modal -->
+        <div id="registerModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+            <div class="bg-white p-6 rounded-2xl shadow-lg w-full max-w-md">
+                <h2 class="text-2xl font-bold text-purple-700 mb-4 text-glow">Hisoratra</h2>
+                <div class="space-y-4">
+                    <input id="registerEmail" type="email" placeholder="Email" class="w-full p-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-4 focus:ring-purple-500" />
+                    <input id="registerPassword" type="password" placeholder="Tenimiafina" class="w-full p-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-4 focus:ring-purple-500" />
+                    <input id="confirmPassword" type="password" placeholder="Hamafiso ny tenimiafina" class="w-full p-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-4 focus:ring-purple-500" />
+                    <button id="submitRegister" class="w-full bg-green-600 text-white px-4 py-2 rounded-lg shadow-glow">Hisoratra</button>
+                    <button id="closeRegisterModal" class="w-full bg-gray-300 text-gray-700 px-4 py-2 rounded-lg">Hikatona</button>
                 </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 font-semibold">Teny miafina</label>
-                    <input type="password" id="login-password" class="w-full p-2 bg-gray-50 bg-opacity-80 border border-gray-300 rounded-lg focus:outline-none focus:ring-4 focus:ring-purple-500 text-sm sm:text-base transition-all duration-300" required>
-                </div>
-                <button id="login-btn" class="w-full bg-gradient-to-r from-blue-600 to-blue-800 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg shadow-glow transition-all duration-300">Hiditra</button>
-            </section>
+            </div>
         </div>
+
+        <!-- Validation Code Modal -->
+        <div id="validationModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+            <div class="bg-white p-6 rounded-2xl shadow-lg w-full max-w-md">
+                <h2 class="text-2xl font-bold text-purple-700 mb-4 text-glow">Fanamarinana kaody</h2>
+                <div class="space-y-4">
+                    <input id="validationCode" type="text" placeholder="Ampidiro ny kaody fanamarinana" class="w-full p-2 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-4 focus:ring-purple-500" />
+                    <button id="submitValidation" class="w-full bg-blue-600 text-white px-4 py-2 rounded-lg shadow-glow">Hamafiso</button>
+                    <button id="closeValidationModal" class="w-full bg-gray-300 text-gray-700 px-4 py-2 rounded-lg">Hikatona</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Validation Modal -->
+        <div id="adminValidationModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+            <div class="bg-white p-6 rounded-2xl shadow-lg w-full max-w-md">
+                <h2 class="text-2xl font-bold text-purple-700 mb-4 text-glow">Fanamarinana ny kaody (Admin)</h2>
+                <div class="space-y-4">
+                    <p id="adminValidationInfo" class="text-gray-700"></p>
+                    <button id="approveValidation" class="w-full bg-green-600 text-white px-4 py-2 rounded-lg shadow-glow">Hanaiky</button>
+                    <button id="rejectValidation" class="w-full bg-red-600 text-white px-4 py-2 rounded-lg shadow-glow">Handà</button>
+                    <button id="closeAdminValidationModal" class="w-full bg-gray-300 text-gray-700 px-4 py-2 rounded-lg">Hikatona</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sélection du Mode -->
+        <section id="gameContent" class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg mb-6 sm:mb-8 transition-all duration-300 animate__animated animate__fadeInUp hidden">
+            <h2 class="text-2xl sm:text-3xl font-bold text-purple-700 mb-4 text-glow">Fidio ny fomba lalao</h2>
+            <div class="flex flex-col space-y-4">
+                <div class="flex flex-col space-y-2">
+                    <button id="normalMode" class="bg-gradient-to-r from-blue-600 to-blue-800 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg shadow-glow transition-all duration-300">Fihodinana Ara-dalàna</button>
+                    <input id="normalTimeInput" type="text" placeholder="HH:MM:SS (oh: 10:10:30)" class="p-1 sm:p-2 bg-gray-50 bg-opacity-80 border border-gray-300 rounded-lg focus:outline-none focus:ring-4 focus:ring-purple-500 text-sm sm:text-base transition-all duration-300" />
+                </div>
+                <div class="flex flex-col space-y-2">
+                    <button id="hardMode" class="bg-gradient-to-r from-red-600 to-red-800 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg shadow-glow transition-all duration-300">Fihodinana Sarotra</button>
+                    <input id="hardTimeInput" type="text" placeholder="HH:MM:SS (oh: 10:10:30)" class="p-1 sm:p-2 bg-gray-50 bg-opacity-80 border border-gray-300 rounded-lg focus:outline-none focus:ring-4 focus:ring-purple-500 text-sm sm:text-base transition-all duration-300" />
+                </div>
+            </div>
+            <p class="mt-4 text-gray-600 text-sm sm:text-base">Fomba ankehitriny : <span id="currentMode" class="font-semibold text-purple-600 text-glow">Ara-dalàna</span></p>
+        </section>
+
+        <!-- Prédictions -->
+        <section class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg mb-6 sm:mb-8 transition-all duration-300 animate__animated animate__fadeInUp">
+            <h2 class="text-2xl sm:text-3xl font-bold text-purple-700 mb-4 text-glow">Vinavina ho an'ny fihodinana manaraka</h2>
+            <div id="prediction" class="space-y-2 sm:space-y-4"></div>
+        </section>
+
+        <!-- Statistiques -->
+        <section class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg mb-6 sm:mb-8 transition-all duration-300 animate__animated animate__fadeInUp">
+            <h2 class="text-2xl sm:text-3xl font-bold text-purple-700 mb-4 sm:mb-6 text-glow">Statistikan'ny lalao</h2>
+            <div class="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-3">
+                <div class="bg-gradient-to-br from-purple-50 to-purple-100 p-4 sm:p-6 rounded-xl transition-all duration-300">
+                    <p class="font-semibold text-gray-700 text-sm sm:text-base">Salan'isa multiplier</p>
+                    <p id="avgMultiplier" class="text-lg sm:text-xl font-bold text-purple-600 text-glow">0.00x</p>
+                </div>
+                <div class="bg-gradient-to-br from-blue-50 to-blue-100 p-4 sm:p-6 rounded-xl transition-all duration-300">
+                    <p class="font-semibold text-gray-700 text-sm sm:text-base">Multiplier avo indrindra</p>
+                    <p id="maxMultiplier" class="text-lg sm:text-xl font-bold text-blue-600 text-glow">0.00x</p>
+                </div>
+                <div class="bg-gradient-to-br from-amber-50 to-amber-100 p-4 sm:p-6 rounded-xl transition-all duration-300">
+                    <p class="font-semibold text-gray-700 text-sm sm:text-base">Hafatran'ny fianjerana < 2x</p>
+                    <p id="lowCrashRate" class="text-lg sm:text-xl font-bold text-amber-600 text-glow">0%</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Historique -->
+        <section class="bg-white p-6 sm:p-8 rounded-2xl shadow-lg transition-all duration-300 animate__animated animate__fadeInUp">
+            <h2 class="text-2xl sm:text-3xl font-bold text-purple-700 mb-4 sm:mb-6 text-glow">Tantaran'ny lalao farany</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left rounded-lg">
+                    <thead>
+                        <tr class="bg-purple-100 text-purple-800">
+                            <th class="p-2 sm:p-3 font-semibold rounded-tl-lg text-sm sm:text-base">Fihodinana</th>
+                            <th class="p-2 sm:p-3 font-semibold text-sm sm:text-base">Multiplier</th>
+                            <th class="p-2 sm:p-3 font-semibold rounded-tr-lg text-sm sm:text-base">Vokatra</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gameHistory"></tbody>
+                </table>
+            </div>
+        </section>
     </div>
-    <script type="module" src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
