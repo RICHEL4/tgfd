@@ -1,3 +1,5 @@
+import { auth, db, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification, signOut, doc, setDoc, getDoc, updateDoc } from './firebase.js';
+
 const isTouchDevice = () => {
     return ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0);
 };
@@ -137,9 +139,27 @@ function updateInterface(mode, timeInput) {
     document.getElementById('currentMode').textContent = mode === 'hard' ? 'Sarotra' : 'Ara-dalàna';
 }
 
+// Gestion de l'affichage des sections
+function showSection(sectionId) {
+    const sections = ['home-section', 'register-section', 'login-section'];
+    sections.forEach(id => {
+        const section = document.getElementById(id);
+        if (id === sectionId) {
+            section.classList.remove('hidden');
+            section.classList.add('animate__animated', 'animate__fadeIn');
+        } else {
+            section.classList.add('hidden');
+            section.classList.remove('animate__animated', 'animate__fadeIn');
+        }
+    });
+}
+
+// Initialisation
 function initialize() {
     let currentMode = 'normal';
     updateInterface(currentMode);
+
+    // Gestion des modes de jeu
     document.getElementById('normalMode').addEventListener('click', () => {
         currentMode = 'normal';
         const timeInput = document.getElementById('normalTimeInput').value;
@@ -149,6 +169,114 @@ function initialize() {
         currentMode = 'hard';
         const timeInput = document.getElementById('hardTimeInput').value;
         updateInterface(currentMode, timeInput);
+    });
+
+    // Gestion de la navigation
+    document.getElementById('home-link').addEventListener('click', (e) => {
+        e.preventDefault();
+        showSection('home-section');
+    });
+    document.getElementById('register-link').addEventListener('click', (e) => {
+        e.preventDefault();
+        showSection('register-section');
+    });
+    document.getElementById('login-link').addEventListener('click', (e) => {
+        e.preventDefault();
+        showSection('login-section');
+    });
+
+    // Gestion de l'inscription
+    document.getElementById('register-btn').addEventListener('click', async () => {
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const errorMessage = document.getElementById('error-message');
+        const successMessage = document.getElementById('success-message');
+
+        try {
+            // Créer l'utilisateur
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            // Générer un code d'activation (6 chiffres)
+            const activationCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+            // Stocker le code dans Firestore
+            await setDoc(doc(db, 'users', user.uid), {
+                email: email,
+                activationCode: activationCode,
+                isActivated: false
+            });
+
+            // Envoyer l'email de vérification
+            await sendEmailVerification(user);
+
+            // Afficher le formulaire de vérification
+            document.getElementById('register-form').classList.add('hidden');
+            document.getElementById('verify-form').classList.remove('hidden');
+            successMessage.textContent = 'Fisoratana nahomby! Jereo ny mailakao ary ampidiro ny kaody fanamafisana.';
+            successMessage.classList.remove('hidden');
+        } catch (error) {
+            errorMessage.textContent = error.message;
+            errorMessage.classList.remove('hidden');
+        }
+    });
+
+    // Gestion de la vérification du code
+    document.getElementById('verify-btn').addEventListener('click', async () => {
+        const code = document.getElementById('activation-code').value;
+        const errorMessage = document.getElementById('error-message');
+        const successMessage = document.getElementById('success-message');
+
+        try {
+            const user = auth.currentUser;
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+
+            if (userDoc.exists() && userDoc.data().activationCode === code) {
+                // Marquer le compte comme activé
+                await updateDoc(doc(db, 'users', user.uid), {
+                    isActivated: true
+                });
+                successMessage.textContent = 'Kaonty nafamafisina soa aman-tsara! Afaka miditra ianao izao.';
+                successMessage.classList.remove('hidden');
+                document.getElementById('verify-form').classList.add('hidden');
+                setTimeout(() => showSection('login-section'), 2000);
+            } else {
+                errorMessage.textContent = 'Kaody fanamafisana diso.';
+                errorMessage.classList.remove('hidden');
+            }
+        } catch (error) {
+            errorMessage.textContent = error.message;
+            errorMessage.classList.remove('hidden');
+        }
+    });
+
+    // Gestion de la connexion
+    document.getElementById('login-btn').addEventListener('click', async () => {
+        const email = document.getElementById('login-email').value;
+        const password = document.getElementById('login-password').value;
+        const errorMessage = document.getElementById('login-error-message');
+        const successMessage = document.getElementById('login-success-message');
+
+        try {
+            // Connecter l'utilisateur
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+
+            // Vérifier si le compte est activé
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            if (userDoc.exists() && userDoc.data().isActivated) {
+                successMessage.textContent = 'Hiditra nahomby! Hafindra...';
+                successMessage.classList.remove('hidden');
+                setTimeout(() => showSection('home-section'), 2000);
+            } else {
+                errorMessage.textContent = 'Mbola tsy nafamafisina ny kaontinao.';
+                errorMessage.classList.remove('hidden');
+                await signOut(auth);
+            }
+        } catch (error) {
+            errorMessage.textContent = error.message;
+            errorMessage.classList.remove('hidden');
+        }
     });
 }
 
