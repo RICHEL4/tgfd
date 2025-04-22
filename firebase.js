@@ -4,11 +4,11 @@ import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, se
 import { getFirestore, collection, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "VOTRE_API_KEY",
-  authDomain: "VOTRE_AUTH_DOMAIN",
+  apiKey: "123321",
+  authDomain: "789987",
   projectId: "VOTRE_PROJECT_ID",
   storageBucket: "VOTRE_STORAGE_BUCKET",
-  messagingSenderId: "VOTRE_MESSAGING_SENDER_ID",
+  messagingSenderId: "101212",
   appId: "VOTRE_APP_ID"
 };
 
